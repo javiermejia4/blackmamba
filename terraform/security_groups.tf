@@ -1,7 +1,7 @@
 module "bastion_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "bastion"
+  name = "bastion"
 
   description = "Security group for Bastion host"
   vpc_id      = var.vpc
