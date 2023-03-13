@@ -1,5 +1,5 @@
 variable "vpc" {
-  default     = "vpc-0166425ed9bb74f12"
+  default     = "vpc-0e9ef16301c0f5b0f"
   description = "VPC-ID"
 }
 
