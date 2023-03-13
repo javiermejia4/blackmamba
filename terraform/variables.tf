@@ -1,5 +1,5 @@
-variable "vpc-id" {
-  default     = "vpc-0166425ed9bb74f12"
+variable "vpc" {
+  default     = "vpc-0e9ef16301c0f5b0f"
   description = "VPC-ID"
 }
 
@@ -8,14 +8,17 @@ variable "region" {
   description = "Default Region"
 }
 
-variable "ingress_ports" {
-  type        = list(number)
-  description = "List if Ingress ports"
-  default     = [443,3389]
+variable "ami" {
+  default     = "ami-036e879e3a42dd7ff"
+  description = "AWS AMI"
 }
 
-variable "allowed_ips" {
-  type        = list(string)
-  description = "Allowed cidr IPs"
-  default     = ["45.50.88.178/32"]
+variable "instance_type" {
+  default     = "t3.micro"
+  description = "EC2 Instance Type"
+}
+
+variable "spot_price" {
+  default     = "0.60"
+  description = "EC2 Spot Price"
 }
