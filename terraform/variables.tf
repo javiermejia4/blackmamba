@@ -22,3 +22,13 @@ variable "spot_price" {
   default     = "0.60"
   description = "EC2 Spot Price"
 }
+
+variable "key_name" {
+  default     = "blackmamba"
+  description = "blackmamba key"
+}
+
+variable "instance_count" {
+  default     = "1"
+  description = "instance count"
+}
