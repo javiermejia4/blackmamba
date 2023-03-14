@@ -11,3 +11,4 @@ debuglog.txt
 **/.vscode/**
 .idea/
 .git/
+.terraform.lock.hcl
