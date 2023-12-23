@@ -8,16 +8,6 @@ variable "region" {
   description = "Default Region"
 }
 
-variable "ami" {
-  default     = "ami-036e879e3a42dd7ff"
-  description = "AWS AMI"
-}
-
-variable "instance_type" {
-  default     = "t3.micro"
-  description = "EC2 Instance Type"
-}
-
 variable "spot_price" {
   default     = "0.60"
   description = "EC2 Spot Price"
@@ -29,6 +19,28 @@ variable "key_name" {
 }
 
 variable "instance_count" {
-  default     = "1"
+  type        = map(number)
   description = "instance count"
+  default = {
+    dev  = "0"
+    test = "0"
+  }
+}
+
+variable "instance_type" {
+  type        = map(string)
+  description = "instance count"
+  default = {
+    dev  = "t3-micro"
+    test = "t3-micro"
+  }
+}
+
+variable "ami" {
+  type        = map(string)
+  description = "AWS AMI"
+  default = {
+    dev  = "ami-036e879e3a42dd7ff"
+    test = "ami-036e879e3a42dd7ff"
+  }
 }
