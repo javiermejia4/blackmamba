@@ -2,6 +2,4 @@ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metad
 && curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/user-data
 
 #!/bin/bash
-yum update -y
-service httpd start
-chkconfig httpd on
+apt update && apt upgrade

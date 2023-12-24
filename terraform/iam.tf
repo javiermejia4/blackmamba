@@ -1,10 +1,10 @@
 resource "aws_iam_instance_profile" "bastion_profile" {
-  name = "bastion_profile"
+  name = "${var.environment}-bastion_profile"
   role = aws_iam_role.bastion_role.name
 }
 
 resource "aws_iam_role" "bastion_role" {
-  name = "bastion_role"
+  name = "${var.environment}-bastion_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -27,7 +27,7 @@ resource "aws_iam_role" "bastion_role" {
 }
 
 resource "aws_iam_policy" "bastion_policy" {
-  name        = "bastion_policy"
+  name        = "${var.environment}-bastion_policy"
   path        = "/"
   description = "Bastion Policy"
 

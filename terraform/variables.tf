@@ -1,6 +1,7 @@
-variable "vpc" {
-  default     = "vpc-0e9ef16301c0f5b0f"
-  description = "VPC-ID"
+variable "environment" {
+  type        = string
+  description = "Environment..."
+  default     = ""
 }
 
 variable "region" {
@@ -43,4 +44,20 @@ variable "ami" {
     dev  = "ami-036e879e3a42dd7ff"
     test = "ami-036e879e3a42dd7ff"
   }
+}
+
+variable "enabled_keys" {
+  type        = map(bool)
+  description = "Enabled or not ..."
+  default = {
+    dev  = "true"
+    test = "false"
+  }
+}
+
+variable "enabled" {
+  type        = bool
+  default     = "0"
+  description = "Enabled or not ..."
+
 }
