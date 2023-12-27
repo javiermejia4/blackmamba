@@ -3,6 +3,7 @@ locals {
     "01" = {
       ami                        = "ami-058168290d30b9c52"
       instance_type              = "t3.micro"
+      subnet_id                  = element(module.vpc.private_subnets, 0)
       home_ebs_volume_throughput = "125"
       home_ebs_volume_size       = "5"
       data_ebs_volume_throughput = "125"
@@ -14,6 +15,7 @@ locals {
     "02" = {
       ami                        = "ami-058168290d30b9c52"
       instance_type              = "t3.micro"
+      subnet_id                  = element(module.vpc.private_subnets, 1)
       home_ebs_volume_throughput = "125"
       home_ebs_volume_size       = "5"
       data_ebs_volume_throughput = "125"
@@ -25,6 +27,7 @@ locals {
     "03" = {
       ami                        = "ami-058168290d30b9c52"
       instance_type              = "t3.micro"
+      subnet_id                  = element(module.vpc.private_subnets, 2)
       home_ebs_volume_throughput = "125"
       home_ebs_volume_size       = "5"
       data_ebs_volume_throughput = "125"
@@ -37,9 +40,8 @@ locals {
 }
 
 module "ec2_instance" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "5.5.0"
-
+  source                 = "terraform-aws-modules/ec2-instance/aws"
+  version                = "5.5.0"
   for_each               = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
   name                   = "blackmamba-bastion-${each.key}"
   ami                    = each.value.ami
@@ -49,7 +51,7 @@ module "ec2_instance" {
   spot_price             = var.spot_price
   spot_type              = "persistent"
   vpc_security_group_ids = [module.bastion_sg.security_group_id]
-  subnet_id              = element(module.vpc.public_subnets, 0)
+  subnet_id              = each.value.subnet_id
   iam_instance_profile   = aws_iam_instance_profile.bastion_profile.name
   monitoring             = false
   user_data = base64encode(templatefile("./templates/userdata.tpl", {
