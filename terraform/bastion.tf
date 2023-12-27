@@ -1,21 +1,50 @@
 locals {
-  ec2-instance  = toset(["01", "02", "03"])
-  ami           = "ami-058168290d30b9c52"
-  instance_type = "t3.micro"
-  key_name      = "blackmamba"
+  ec2-instance = {
+    "01" = {
+      ami                        = "ami-058168290d30b9c52"
+      instance_type              = "t3.micro"
+      home_ebs_volume_throughput = "125"
+      home_ebs_volume_size       = "5"
+      data_ebs_volume_throughput = "125"
+      data_ebs_volume_size       = "5"
+      opt_ebs_volume_throughput  = "125"
+      opt_ebs_volume_size        = "8"
 
+    }
+    "02" = {
+      ami                        = "ami-058168290d30b9c52"
+      instance_type              = "t3.micro"
+      home_ebs_volume_throughput = "125"
+      home_ebs_volume_size       = "5"
+      data_ebs_volume_throughput = "125"
+      data_ebs_volume_size       = "5"
+      opt_ebs_volume_throughput  = "125"
+      opt_ebs_volume_size        = "8"
+
+    }
+    "03" = {
+      ami                        = "ami-058168290d30b9c52"
+      instance_type              = "t3.micro"
+      home_ebs_volume_throughput = "125"
+      home_ebs_volume_size       = "5"
+      data_ebs_volume_throughput = "125"
+      data_ebs_volume_size       = "5"
+      opt_ebs_volume_throughput  = "125"
+      opt_ebs_volume_size        = "8"
+
+    }
+  }
 }
 
 module "ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "5.5.0"
 
-  for_each = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
-
+  for_each               = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
   name                   = "blackmamba-bastion-${each.key}"
-  ami                    = local.ami
-  instance_type          = local.instance_type
-  key_name               = local.key_name
+  ami                    = each.value.ami
+  instance_type          = each.value.instance_type
+  key_name               = "blackmamba"
   create_spot_instance   = false
   spot_price             = var.spot_price
   spot_type              = "persistent"
@@ -46,48 +75,48 @@ module "ec2_instance" {
 }
 
 resource "aws_ebs_volume" "home" {
-  for_each          = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
-  availability_zone = module.ec2_instance[each.value].availability_zone
+  for_each          = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
+  availability_zone = module.ec2_instance[each.key].availability_zone
   encrypted         = true
   type              = "gp3"
-  throughput        = 125
-  size              = 5
+  throughput        = each.value.home_ebs_volume_throughput
+  size              = each.value.home_ebs_volume_size
 }
 
 resource "aws_volume_attachment" "attach-home" {
-  for_each    = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
+  for_each    = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
   device_name = "/dev/xvdf"
   instance_id = module.ec2_instance[each.key].id
   volume_id   = aws_ebs_volume.home[each.key].id
 }
 
 resource "aws_ebs_volume" "data" {
-  for_each          = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
-  availability_zone = module.ec2_instance[each.value].availability_zone
+  for_each          = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
+  availability_zone = module.ec2_instance[each.key].availability_zone
   encrypted         = true
   type              = "gp3"
-  throughput        = 125
-  size              = 5
+  throughput        = each.value.data_ebs_volume_throughput
+  size              = each.value.data_ebs_volume_size
 }
 
 resource "aws_volume_attachment" "attach-data" {
-  for_each    = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
+  for_each    = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
   device_name = "/dev/xvdg"
   instance_id = module.ec2_instance[each.key].id
   volume_id   = aws_ebs_volume.data[each.key].id
 }
 
 resource "aws_ebs_volume" "opt" {
-  for_each          = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
-  availability_zone = module.ec2_instance[each.value].availability_zone
+  for_each          = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
+  availability_zone = module.ec2_instance[each.key].availability_zone
   encrypted         = true
   type              = "gp3"
-  throughput        = 125
-  size              = 8
+  throughput        = each.value.opt_ebs_volume_throughput
+  size              = each.value.opt_ebs_volume_size
 }
 
 resource "aws_volume_attachment" "attach-opt" {
-  for_each    = { for k, v in(local.ec2-instance) : k => v if var.environment == "dev" }
+  for_each    = { for k, v in local.ec2-instance : k => v if var.environment == "dev" }
   device_name = "/dev/xvdh"
   instance_id = module.ec2_instance[each.key].id
   volume_id   = aws_ebs_volume.opt[each.key].id
